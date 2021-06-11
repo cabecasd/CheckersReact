@@ -1,0 +1,90 @@
+.pagina {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    background: #3C8B24;
+    height:100%;
+
+}
+.pagina h2 {
+    font-size: 250%;
+}
+.tabuleiro {
+    margin-bottom: auto;
+    margin-top: auto;
+}
+.tabuleiro p {
+    margin-bottom: 100px;
+}
+table {
+    margin-top: 70px;
+    border-spacing: 0;
+}
+table img {
+    width: 35px;
+    height: 35px;
+}
+.tabuleiro td {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+    color: black;
+    text-align: center;
+    font-family: "Open Sans", sans-serif;
+}
+
+.tabuleiro td:first-child {
+    border-left: 5px solid black;
+}
+.tabuleiro td:last-child {
+    border-right: 5px solid black;
+}
+.tabuleiro tr:first-child td {
+    border-top: 5px solid black;
+}
+.tabuleiro tr:last-child td {
+    border-bottom: 5px solid black;
+}
+tr:nth-child(even) td:nth-child(even) {
+    background: #bdbdbd;
+  }
+tr:nth-child(odd) td:nth-child(odd) {
+    background: #bdbdbd;
+}
+tr:nth-child(odd) td:nth-child(even), tr:nth-child(even) td:nth-child(odd) {
+    background: white;
+}
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
+.possivelBob {
+    background-color: rgba(244, 205, 9, 0.75) !important; 
+}
+.possivelBart {
+    background-color: rgba(192, 5, 50, 0.75) !important;
+}
+.branco2 {
+    background-color: rgba(192, 5, 50, 0.75) !important;
+}
+.pagina .branco:hover img{
+    transform: scale(1.15);
+}
+.pagina .preto:hover img{
+    transform: scale(1.15);
+}
+.pagina .branco:hover{
+    background:rgba(192, 5, 50, 0.75) !important
+}
+.pagina .preto:hover{
+    background:rgba(244, 205, 9, 0.75)!important
+}
+.turn img {
+    width: 50px !important;
+    height: 50px !important;
+}
+.turn {
+    font-size: 20px;
+    align-items: center;
+}
