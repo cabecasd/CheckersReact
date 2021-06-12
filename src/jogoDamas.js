@@ -34,7 +34,7 @@ class JogoDasDamas extends React.Component {
             posicaoDaPecaY: undefined,
             comeu: false,
             xMorto: 0,
-            cMorto: 11,
+            cMorto: 0,
             jogoTerminado: undefined
         } //fim do state
         this.verificaPossiveisMovimento = this.verificaPossiveisMovimento.bind(this)
@@ -45,7 +45,7 @@ class JogoDasDamas extends React.Component {
 
         if (!this.state.jogoTerminado) {
             let tabuleiro = [...this.state.tabuleiro];
-            let lado = tabuleiro[x][y] === "x" ? - 1 : + 1
+            let lado = this.state.jogadorAtual === "x" ? - 1 : + 1
 
             let posX = this.state.posicaoDaPecaX
             let posY = this.state.posicaoDaPecaY
@@ -70,8 +70,7 @@ class JogoDasDamas extends React.Component {
         }
     }
     verificaPossiveis(posX, posY, lado, tabuleiro) {
-        console.log("a verificar as jogadas possiveis para a peca com as coordenadas:")
-        console.log([posX, posY])
+
         let possiveis = [[], []]
 
         if (this.state.jogadorAtual === "x" && posX > 1) {
@@ -83,9 +82,6 @@ class JogoDasDamas extends React.Component {
 
         possiveis = this.verificaPossiveisMovimento(posX, posY, lado, possiveis, tabuleiro)
 
-        console.log("as posiveis jogadas sao")
-        console.log(possiveis)
-
         this.setState((state) => { state.jogadasPossiveis = possiveis }
         )
     }
@@ -95,13 +91,11 @@ class JogoDasDamas extends React.Component {
         let possiveis2 = possiveis
         //caso tenha uma peca a frente e a seguinte esteja vazia, pode-se comer, para a esquerda
         if (tabuleiro[x + lado][y - 1] === this.state.oponente && tabuleiro[x + lado * 2][y - 2] === "") {
-            console.log("esquerda com captura")
             possiveis2[0] = [x + lado * 2, y - 2]
         }
 
         //o mesmo para a direita
         if (tabuleiro[x + lado][y + 1] === this.state.oponente && tabuleiro[x + lado * 2][y + 2] === "") {
-            console.log("direita com captura")
             possiveis2[1] = [x + lado * 2, y + 2]
         }
 
@@ -115,21 +109,15 @@ class JogoDasDamas extends React.Component {
         //verificar se pode mover para a casa da esquerda
         if (tabuleiro[x + lado][y - 1] === "") {
             possiveis2[0] = [x + lado, y - 1]
-            console.log("esquerda sem captura")
         }
         //o mesmo para a direita
         if (tabuleiro[x + lado][y + 1] === "") {
             possiveis2[1] = [x + lado, y + 1]
-            console.log("direita sem captura")
         }
         return possiveis2
     }
 
     movimento(x, y, tabuleiro, lado, posX, posY) {
-        console.log(`regista movimento da peça ${posX},${posY} para a celula ${x},${y}`)
-        // let array = [  [1, 2] , [5, 4]  ] //1 e 5 sao linhas, 2 e 4 sao colunas
-        // console.log(array[0][1])
-        // console.log(array[1][0])
 
         //jogadaspossiveis[0] <--- jogada possivel a esquerda
         //jogadaspossiveis[1] <--- jogada possivel a direita
@@ -153,7 +141,7 @@ class JogoDasDamas extends React.Component {
         tabuleiro[x][y] = posicaoFinal;
         tabuleiro[posX][posY] = posicaoInicial
 
-        comeuPeca = this.movimentoCome(x, y, tabuleiro, lado, posX)
+        comeuPeca = this.movimentoCome(x, y, tabuleiro, posX)
 
         //substitui por dama
         if (tabuleiro[0].includes("x")) {
@@ -180,7 +168,7 @@ class JogoDasDamas extends React.Component {
             this.state.oponente === "c" ? this.setState({ oponente: "x" }) : this.setState({ oponente: "c" })
 
         }
-        console.log(tabuleiro[0])
+
         this.verificaVencedor()
         //final da jogada, tira as jogadas possiveis
         this.setState({
@@ -189,12 +177,11 @@ class JogoDasDamas extends React.Component {
     }
 
 
-    movimentoCome(x, y, tabuleiro, lado, posX) {
+    movimentoCome(x, y, tabuleiro, posX) {
 
         if (this.state.jogadorAtual === "x") {
             if (Math.abs(x - posX) > 1 && (x === this.state.jogadasPossiveis[0][0] && y === this.state.jogadasPossiveis[0][1])) {
-                tabuleiro[x + lado][y + 1] = ""
-                console.log("capturou a esquerda")
+                tabuleiro[x + 1][y + 1] = ""
 
                 this.setState((state) => {
                     state.cMorto += 1
@@ -204,8 +191,7 @@ class JogoDasDamas extends React.Component {
                 return true
             }
             else if (Math.abs(x - posX) > 1 && (x === this.state.jogadasPossiveis[1][0] && y === this.state.jogadasPossiveis[1][1])) {
-                tabuleiro[x + lado][y - 1] = ""
-                console.log("capturou a direita")
+                tabuleiro[x + 1][y - 1] = ""
 
                 this.setState((state) => {
                     state.cMorto++
@@ -218,8 +204,7 @@ class JogoDasDamas extends React.Component {
 
         if (this.state.jogadorAtual === "c") {
             if (Math.abs(x - posX) > 1 && (x === this.state.jogadasPossiveis[0][0] && y === this.state.jogadasPossiveis[0][1])) {
-                tabuleiro[x + lado][y + 1] = ""
-                console.log("capturou a esquerda")
+                tabuleiro[x - 1][y + 1] = ""
 
                 this.setState((state) => {
                     state.xMorto++
@@ -230,8 +215,7 @@ class JogoDasDamas extends React.Component {
                 return true
             }
             else if (Math.abs(x - posX) > 1 && (x === this.state.jogadasPossiveis[1][0] && y === this.state.jogadasPossiveis[1][1])) {
-                tabuleiro[x + lado][y - 1] = ""
-                console.log("capturou a direita")
+                tabuleiro[x - 1][y - 1] = ""
 
                 this.setState((state) => {
                     state.xMorto += 1
@@ -282,14 +266,22 @@ class JogoDasDamas extends React.Component {
     }
 
     verificaVencedor() {
-        if (this.state.cMorto > 11) {
-            alert("x venceu")
+        if (this.state.cMorto > 11 ) {
+            alert("Bart é o vencedor")
 
             this.setState(state =>{
                 state.jogoTerminado = true
             })
         }
+        if (this.state.xMorto > 11) {
+            alert("Sideshow Bob é o vencedor")
+
+            this.setState(state =>{
+                state.jogoTerminado = true
+            })
+        }         
     }
+    
 
 
     render() {
@@ -364,145 +356,3 @@ class JogoDasDamas extends React.Component {
 }
 
 export default JogoDasDamas;
-/*
-
-    this.comeu = this.comeu.bind(this)
-    comeu(x, y, eOD) {
-
-        let direcaoVertical = this.state.tabuleiro[x][y] === "x" ? +1 : - 1
-        let direcaoHorizontal = eOD === "esquerda" ? + 1 : - 1
-
-        if (this.state.tabuleiro[x + direcaoVertical][y + direcaoHorizontal] === "") {
-            console.log("comeu")
-            return true
-        } else if (this.state.tabuleiro[x + direcaoVertical][y + direcaoHorizontal] === "") {
-            console.log("comeu")
-            return true
-        }
-
-        return false
-
-    }
-
-
-
-
-    if(Math.abs(x - this.state.posicaoDaPecaX) > 1 && Math.abs(y - this.state.posicaoDaPecaY) > 1) {
-             // console.log("entrou if 1")
-
-            if (this.state.tabuleiro[x][y] === "c") {
-                // console.log("entrou if 2")
-                this.verificaPossiveisComer(x, y, +1)
-                if(this.state.podeComerEsquerda || this.state.podeComerDireita) {
-
-                    // console.log("entrou if 3")
-                    return true
-                }
-            }
-            if (this.state.tabuleiro[x][y] === "x") {
-                // console.log("entrou if 2")
-                this.verificaPossiveisComer(x, y, -1)
-                if(this.state.podeComerEsquerda || this.state.podeComerDireita) {
-                    // console.log("entrou if 3")
-                    return true
-                }
-            }
-
-        } return false
-
-
-
-
-
-
-
-
-
-        com a ideia de rodar o tabuleiro
-        as jogadas possiveis são sempre a x+1 y-1 e x+1 y-1
-
-        ["      ","Peça","      "],
-        ["pssvel","    ","pssvel"],
-        ["      ","    ","      "],
-
-        exclui-se depois as possiveis dependendo se ha uma peca nessa posicao ou nao
-
-
-
-        if()
-                console.log("wahoo")
-                return true
-            this.state.jogadasPossiveis[0] !== undefined || this.state.jogadasPossiveis[1] !== undefined
-
-
-
-                this.setState({
-            comeu: true
-        })
-
-
-
-
-
-
-
-
-
-
-        this.rodaTabuleiro = this.rodaTabuleiro.bind(this)
-    rodaTabuleiro(tabuleiro) {
-
-        let novoTabuleiro = []
-        for(let i = tabuleiro.length - 1; i >= 0; i--) {
-            let linhaTemp = []
-            novoTabuleiro.push(linhaTemp)
-
-            for(let j = tabuleiro.length - 1; j >= 0; j--) {
-                linhaTemp.push(tabuleiro[i][j])
-
-            }
-        }
-
-        this.setState(state => {
-            state.tabuleiro = novoTabuleiro
-        })
-
-    }
-
-
-
-
-
-
-        // else {
-
-        //     if (this.state.jogadorAtual === "x") {
-
-        //         if (tabuleiro[x - 1][y - 1] === this.state.oponente && tabuleiro[x - 2][y - 2] === "") {
-
-        //             possiveis2[0] = [x - 2, y - 2]
-        //         }
-
-
-        //         if (tabuleiro[x - 1][y + 1] === this.state.oponente && tabuleiro[x - 2][y + 2] === "") {
-
-        //             possiveis2[1] = [x - 2, y + 2]
-
-        //         }
-        //     } else if ( this.state.jogadorAtual === "c") {
-
-        //         if (tabuleiro[x + 1][y - 1] === this.state.oponente && tabuleiro[x + 2][y - 2] === "") {
-
-        //             possiveis2[0] = [x + 2, y - 2]
-        //         }
-
-
-        //         if (tabuleiro[x + 1][y + 1] === this.state.oponente && tabuleiro[x + 2][y + 2] === "") {
-
-        //             possiveis2[1] = [x + 2, y + 2]
-
-        //         }
-        //     }
-
-        // }
-*/
